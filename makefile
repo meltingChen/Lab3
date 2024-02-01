@@ -1,20 +1,46 @@
-CXX=c++
-CXXSOURCE= main.cpp cmdline.cpp expr.cpp
-CXXFLAGS= --std=c++14 -O2
-HEADERS=cmdline.hpp expr.hpp catch.h
-OBJS=main.o cmdline.o expr.o
+# Thanmay
+# MSDscript
 
-msdscript:$(OBJS)
-	$(CXX) $(CXXFLAGS) -o msdscript $(OBJS)
-main.o:main.cpp
-	$(CXX) $(CXXFLAGS) -c main.cpp
-cmdline.o:cmdline.cpp cmdline.hpp catch.h
-	$(CXX) $(CXXFLAGS) -c cmdline.cpp
-expr.o:expr.cpp expr.hpp catch.h
-	$(CXX) $(CXXFLAGS) -c expr.cpp
+# Macros
+CXX = c++
+CFLAGS = --std=c++11
+CCSOURCE = main.cpp cmdline.cpp expr.cpp ExprTest.cpp
+OBJS = main.o cmdline.o expr.o ExprTest.o
+INCS = cmdline.hpp expr.hpp catch.h
 
-clean:
-	rm -f *.o msdscript.out
+# All
+All: compiler linker
 
-.PHONY:clean
+# Compiler
+compiler: $(CCSOURCE) $(INCS)
+	$(CXX) $(CFLAGS) -c $(CCSOURCE)
+
+# Linker
+linker: $(OBJS)
+	$(CXX) $(OBJS) -o msdscript
 	
+
+msdscript: All
+
+# PrintM
+printM:
+	@echo "CXX = c++"
+	@echo "CFLAGS = --std=c++14"
+	@echo "CCSOURCE = main.cpp cmdline.cpp expr.cpp ExprTest.cpp"
+	@echo "OBJS = main.o cmdline.o expr.o ExprTest.o"
+	@echo "INCS = cmdline.hpp expr.hpp"
+
+# Phony
+.PHONY: clean
+
+# Clean
+clean:
+	rm -f *.o *.out msdscript
+	@echo "CLEAN"
+
+# Run
+run: msdscript
+	./msdscript --test
+
+
+
