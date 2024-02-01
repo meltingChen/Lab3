@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "537ACB68-4930-41C1-95CE-38DC4D58448A",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "--test"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:codeCoverageL8.xcodeproj",
+      "identifier" : "CF48A8312B6C2763002E3E8E",
+      "name" : "codeCoverageL8"
+    }
+  },
+  "testTargets" : [
+
+  ],
+  "version" : 1
+}
