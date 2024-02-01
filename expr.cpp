@@ -2,221 +2,216 @@
 //  expr.cpp
 //  MSDscript
 //
-//  Created by 陳肜樺 on 1/22/24.
+//  Created by Thanmay Reddy Lakkireddy on 1/23/24.
 //
 
 #include "expr.hpp"
-#include <stdio.h>
-#include <iostream>
+#include <stdexcept>
 
-Num::Num(int val)  {
-    this->val = val;
+using namespace std;
+
+
+/*
+ --------NUMBER----------
+ */
+
+// Number
+Number :: Number (int value) {
+    // value
+    this -> value = value;
+    
 }
 
-bool Num::equals(Expr* e){
-    Num *n = dynamic_cast<Num*>(e);
+// Number - Equals
+bool Number :: equals (Expr * number) {
     
-    if(n==NULL){
+    Number *numberTwo = dynamic_cast<Number*>(number);
+    
+    if (numberTwo == NULL) {
         return false;
+    } else {
+        return (this->value == numberTwo->value);
     }
-    return this->val == n->val;
-}
-
-int Num::interp(){
     
-    return this->val;
 }
 
-bool Num::has_variable(){
+// Number - Interp
+int Number :: interp() {
+    
+    return this -> value;
+    
+}
+
+// Number - Has Variable
+bool Number :: has_variable() {
+    // bool
     return false;
-}
-
-Expr* Num::subst(std::string s, Expr* e){
     
-    return this;
 }
 
-Add::Add(Expr *lhs, Expr *rhs){
-    this->lhs = lhs;
-    this->rhs = rhs;
-}
-
-bool Add::equals(Expr* e){
-    Add *n = dynamic_cast<Add*>(e);
+//  Number - subst
+Expr* Number :: subst(string var, Expr* randExpr) {
     
-    if(n==NULL){
+    return new Number(this -> value);
+    
+}
+
+
+/*
+ ----------ADD----------
+ */
+
+
+// Add
+Add :: Add (Expr *numberOne, Expr *numberTwo) {
+    
+    this->lhs = numberOne;
+    this->rhs = numberTwo;
+    
+}
+
+// Add - Equals
+bool Add :: equals(Expr *number) {
+    
+    Add *numberTwo = dynamic_cast<Add*>(number);
+    
+    if (numberTwo == NULL) {
         return false;
+    } else {
+        return this->lhs -> equals(numberTwo->lhs) && this->rhs -> equals(numberTwo -> rhs);
     }
     
-    return n->rhs->equals( this->rhs) && n->lhs->equals(this->lhs);
 }
 
-int Add::interp(){
-//    Num *lhs_num = dynamic_cast<Num*>(this->lhs);
-//    Num * rhs_num = dynamic_cast<Num*>(this->rhs);
+// Add - Interp
+int Add :: interp() {
     
-    return lhs -> interp()  + rhs -> interp();
+    int numberOne = (this-> lhs-> interp());
+    int numberTwo = (this-> rhs-> interp());
     
-}
-
-bool Add::has_variable(){
-    
-    return ((this->lhs->has_variable()==true) || (this->rhs->has_variable()==true));
-}
-
-Expr* Add::subst(std::string s, Expr* e){
-    //think recursively
-    //new Add(new Add(new Num(8), new Num(7)), new Add(new Var("x"), new Num(5))) -> subst("x",new Num(7))
-//    lhs -> subst(s, e);
-//    rhs -> subst(s, e);
-    
-    return new Add(this->lhs->subst(s, e), this->rhs->subst(s, e)) ;
-}
-    
-
-
-Mult::Mult(Expr* lhs, Expr* rhs){
-    
-    this->lhs = lhs;
-    this->rhs = rhs;
+    // add
+    int total = numberOne + numberTwo;
+    return total; // total
     
 }
 
-bool Mult::equals(Expr *e){
-    Mult *n = dynamic_cast<Mult*>(e);
+// Add - Has Variable
+bool Add :: has_variable() {
+
+    return (lhs ->has_variable() || rhs -> has_variable());
     
-    if(n==NULL){
+}
+
+// Add - Subst
+Expr* Add :: subst (string var, Expr* randExpr){
+    
+    // do not use dynamic casting
+    return new Add(lhs->subst(var, randExpr), rhs->subst(var, randExpr));
+    
+}
+
+
+/*
+ --------------Multiply-----------
+ */
+
+
+// Multiply
+Multiply :: Multiply (Expr *numberOne, Expr *numberTwo) {
+    
+    this->lhs = numberOne;
+    this->rhs = numberTwo;
+    
+}
+
+// Multiply - Equals
+bool Multiply :: equals(Expr *number) {
+    
+    Multiply *numberTwo = dynamic_cast<Multiply*>(number);
+    
+    if (numberTwo == NULL) {
         return false;
+    } else {
+        return this->lhs -> equals(numberTwo->lhs) && this->rhs -> equals(numberTwo -> rhs);
     }
     
-    return n->rhs->equals( this->rhs) && n->lhs->equals(this->lhs);
 }
 
-int Mult::interp(){
-   
-//    Num *lhs_num = dynamic_cast<Num*>(this->lhs);
-//    Num * rhs_num = dynamic_cast<Num*>(this->rhs);
-    return this-> lhs -> interp()  * this->rhs->interp();
+// Multiply - Interp
+int Multiply :: interp() {
     
+    int numberOne = (this -> lhs -> interp() );
+    int numberTwo = (this -> rhs -> interp());
+    
+    int total = numberOne * numberTwo;
+    
+    return total; // total
     
 }
 
-bool Mult::has_variable(){
-   
-    return ((this->lhs->has_variable()==true) || (this->rhs->has_variable()==true));
-}
-
-Expr* Mult::subst(std::string s, Expr* e){
+// mMultiply - Has Variable
+bool Multiply:: has_variable() {
+    return (lhs ->has_variable() || rhs -> has_variable());
     
-    return new Mult(this->lhs->subst(s, e), this->rhs->subst(s, e));
 }
 
-
-Var::Var(std::string name) {
-    this -> name = name;
-}
-
-bool Var::equals(Expr *e) {
-    Var *n = dynamic_cast<Var*>(e);
+// Multiply - Subst
+Expr* Multiply :: subst (string var, Expr* randExpr) {
     
-    if(n==NULL){
+    // do not use dynamic casting
+    return new Multiply(lhs->subst(var, randExpr), rhs->subst(var, randExpr));
+    
+}
+
+
+/*
+ -------------Variable--------------
+ */
+
+// Variable
+Variable :: Variable (string val) {
+    
+    this -> val = val;
+    
+}
+
+// Variable - Equals
+bool Variable :: equals(Expr *var) {
+    
+    Variable *varTwo = dynamic_cast<Variable*>(var);
+    
+    if (varTwo == NULL) {
         return false;
+    } else {
+        return this->val == varTwo->val;
     }
     
-    return this -> name == n -> name;
 }
 
-int Var::interp() {
-    throw std::runtime_error("no value for variable");
+// Variabel - Interp
+int Variable :: interp() {
+    // throws
+    throw runtime_error("no value for variable");
+
+    
 }
 
-bool Var::has_variable(){
+// Variable - Has Variable
+bool Variable :: has_variable () {
+    
+    // bool
     return true;
 }
 
-Expr* Var::subst(std::string s, Expr* e){
-    if(s == (this->name)){
-        return e;
-    }
-    return this;
-}
-
-
-
-TEST_CASE("Tests"){
-    SECTION("HW2"){
-        //Check Num class
-        CHECK( (new Num(1))->equals(new Var("x")) == false );
-        CHECK( (new Num(5))->equals(new Num(100000000)) == false );
-        
-        //Check Var class
-        CHECK( (new Var(""))->equals(new Var("")) == true );
-        CHECK( (new Num(0))->equals(new Var("x")) == false );
-        CHECK( (new Var("x"))->equals(new Var("x")) == true );
-        CHECK( (new Var("x"))->equals(new Var("y")) == false );
-        
-        //Check Add class
-        CHECK( (new Add(new Num(2),new Num(3)))->equals(new Add(new Num(2),new Num(3)))==true );
-        CHECK( (new Add(new Num(2),new Num(3)))->equals(new Add(new Num(3),new Num(2)))==false );
-        CHECK( (new Add(new Num(0),new Num(0)))->equals(new Add(new Num(0),new Num(0)))==true );
-        //        CHECK( (new Add(new Num(2),new Num(3)))->equals(new Num(5))==true );
-        
-        //Check Mult class
-        CHECK( (new Mult(new Num(2),new Num(3)))->equals(new Mult(new Num(2),new Num(3)))==true );
-        CHECK( (new Mult(new Num(2),new Num(3)))->equals(new Mult(new Num(3),new Num(2)))==false );
-        CHECK( (new Mult(new Num(2),new Num(3)))->equals(new Add(new Num(3),new Num(3)))==false );
-        CHECK( (new Mult(new Num(0),new Num(3)))->equals(new Mult(new Num(3),new Num(0)))==false );
-    }
-    SECTION("interp"){
-        CHECK( (new Num(0))->interp()==0 );
-        CHECK( (new Num(-5))->interp()==-5 );
-        CHECK( (new Num(10))->interp()==10 );
-        CHECK( (new Num(100))->interp()==100 );
-        CHECK_THROWS_WITH( (new Var("x"))->interp(), "no value for variable");
-        CHECK( (new Mult(new Num(0), new Num(0)))->interp()==0 );
-        CHECK( (new Mult(new Num(10), new Num(0)))->interp()==0 );
-        CHECK( (new Mult(new Num(3), new Num(2)))->interp()==6 );
-        CHECK( (new Mult(new Num(10), new Num(10)))->interp()==100 );
-        CHECK( (new Add(new Add(new Num(0), new Num(0)),new Add(new Num(0),new Num(0)))) ->interp()==0);
-        CHECK( (new Add(new Add(new Num(10), new Num(15)),new Add(new Num(20),new Num(20)))) ->interp()==65);
-        CHECK( (new Add(new Add(new Num(-10), new Num(15)),new Add(new Num(-20),new Num(20)))) ->interp()==5);
-        CHECK( (new Add(new Add(new Num(-15), new Num(15)),new Add(new Num(-20),new Num(20)))) ->interp()==0);
-        CHECK( (new Add(new Add(new Num(-20), new Num(15)),new Add(new Num(-20),new Num(20)))) ->interp()==-5);
-       
-    }
-    SECTION("has_variable"){
-        CHECK( (new Var(""))->has_variable() == true );
-        CHECK( (new Var("x"))->has_variable() == true );
-        CHECK( (new Num(0))->has_variable() == false );
-        CHECK( (new Mult(new Num(2), new Num(1)))->has_variable() == false );
-        CHECK( (new Mult(new Var("x"), new Num(1)))->has_variable() == true );
-        CHECK( (new Add(new Var("x"), new Num(1)))->has_variable() == true );
-        CHECK( (new Add(new Var("x"), new Num(1)))->has_variable() == true );
-        
-    }
-    SECTION("subst"){
+// Variable - SUbst
+Expr* Variable :: subst(string var, Expr* randExpr){
     
-        CHECK( (new Add(new Var("x"), new Num(7)))
-               ->subst("x", new Var("y"))
-               ->equals(new Add(new Var("y"), new Num(7))) );
-        CHECK( (new Add(new Var("x"), new Num(7)))
-               ->subst("y", new Var("y"))
-               ->equals(new Add(new Var("x"), new Num(7))) );
-        CHECK( (new Var("x"))
-               ->subst("x", new Add(new Var("y"),new Num(7)))
-               ->equals(new Add(new Var("y"),new Num(7))) );
-        CHECK( (new Var("y"))
-               ->subst("x", new Add(new Var("y"),new Num(7)))
-               ->equals(new Var("y") ));
-        CHECK( (new Num(1))
-               ->subst("x", new Add(new Var("y"),new Num(7)))
-               ->equals(new Num(1) ));
-        CHECK( (new Mult(new Var("x"), new Num(7)))
-               ->subst("x", new Var("y"))
-               ->equals(new Mult(new Var("y"), new Num(7))) );
-        CHECK( (new Mult(new Var("x"), new Num(7)))
-               ->subst("x", new Var("y"))
-               ->equals(new Mult(new Var("y"), new Num(7))) );
+    if(this->val == var){
         
+        return randExpr;
     }
-};
+
+    // return
+    return new Variable (this->val);
+    
+}

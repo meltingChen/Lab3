@@ -2,22 +2,12 @@
 //  cmdline.hpp
 //  MSDscript
 //
-//  Created by 陳肜樺 on 1/14/24.
+//  Created by Thanmay Reddy Lakkireddy on 1/16/24.
 //
 
 #ifndef cmdline_hpp
 #define cmdline_hpp
 
-
-#include <iostream>
-#include <string>
-#include <map>
-#include <stdio.h>
-#include <stdexcept>
-#include "catch.h"
-
-
-
-void use_arguments(int argc,const char * argv[]);
+void use_arguments (int argc, char* argv[]);
 
 #endif /* cmdline_hpp */
